@@ -1,8 +1,6 @@
 defmodule HnAggregator.WebClientTest do
   use ExUnit.Case, async: true
 
-  alias LsportsClient.WebClient
-
   setup_all do
     bypass = Bypass.open(port: 9999)
     {:ok, bypass: bypass}
