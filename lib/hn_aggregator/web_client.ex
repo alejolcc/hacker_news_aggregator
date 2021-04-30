@@ -9,19 +9,33 @@ defmodule HnAggregator.WebClient do
   """
 
   @name __MODULE__
-  @endpoint "https://hacker-news.firebaseio.com"
-  @default_timeout :timer.seconds(30)
+  @default_timeout Application.compile_env(
+                     :hn_aggregator,
+                     [HnAggregatorWeb.WebClient, :timeout],
+                     :timer.seconds(30)
+                   )
 
-  def get_stories() do
-    endpoint = @endpoint <> "/v0/topstories.json"
-    timeout = @default_timeout
+  def get_stories(opts \\ []) do
+    endpoint = endpoint("/v0/topstories.json")
+    timeout = Keyword.get(opts, :timeout, @default_timeout)
+
     do_request(endpoint, timeout)
   end
 
-  def get_item(id) do
-    endpoint = @endpoint <> "/v0/item/#{id}.json"
-    timeout = @default_timeout
+  def get_item(id, opts \\ []) do
+    endpoint = endpoint("/v0/item/#{id}.json")
+    timeout = Keyword.get(opts, :timeout, @default_timeout)
+
     do_request(endpoint, timeout)
+  end
+
+  defp endpoint(call) do
+    url =
+      :hn_aggregator
+      |> Application.get_env(HnAggregatorWeb.WebClient)
+      |> Keyword.fetch!(:url)
+
+    url <> call
   end
 
   defp do_request(endpoint, timeout) do
@@ -30,7 +44,6 @@ defmodule HnAggregator.WebClient do
     |> case do
       {:ok, %Finch.Response{status: 200, body: body}} ->
         Jason.decode(body)
-        |> IO.inspect()
 
       {:error, _reason} = err ->
         err
