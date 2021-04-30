@@ -6,16 +6,15 @@ defmodule HnAggregator.Application do
   use Application
 
   def start(_type, _args) do
+    poller_config =
+      Application.get_env(:hn_aggregator, HnAggregator.Poller, polling_time: :timer.seconds(5))
+
     children = [
-      # Start the Telemetry supervisor
       HnAggregatorWeb.Telemetry,
       {Finch, name: HnAggregator.WebClient},
-      # Start the PubSub system
       {Phoenix.PubSub, name: HnAggregator.PubSub},
-      # Start the Endpoint (http/https)
-      HnAggregatorWeb.Endpoint
-      # Start a worker by calling: HnAggregator.Worker.start_link(arg)
-      # {HnAggregator.Worker, arg}
+      HnAggregatorWeb.Endpoint,
+      {HnAggregator.Poller, poller_config}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
