@@ -45,6 +45,15 @@ defmodule HnAggregator.WebClient do
       {:ok, %Finch.Response{status: 200, body: body}} ->
         Jason.decode(body)
 
+      {:ok, %Finch.Response{status: 401}} ->
+        {:error, {:permission_denied, endpoint}}
+
+      {:ok, %Finch.Response{status: status_code}} ->
+        {:error, {:error, status_code}}
+
+      {:error, %Mint.TransportError{reason: :timeout}} ->
+        {:error, :timeout}
+
       {:error, _reason} = err ->
         err
     end
