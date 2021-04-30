@@ -9,6 +9,7 @@ defmodule HnAggregator.Application do
     children = [
       # Start the Telemetry supervisor
       HnAggregatorWeb.Telemetry,
+      {Finch, name: HnAggregator.WebClient},
       # Start the PubSub system
       {Phoenix.PubSub, name: HnAggregator.PubSub},
       # Start the Endpoint (http/https)

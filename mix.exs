@@ -40,10 +40,12 @@ defmodule HnAggregator.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
+      {:finch, "~> 0.6"},
 
       # Development
       {:credo, "~> 1.5", only: :dev},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:bypass, "~> 2.0", only: [:test, :integration]}
     ]
   end
 
