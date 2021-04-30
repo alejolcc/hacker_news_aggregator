@@ -15,6 +15,9 @@ defmodule HnAggregator.WebClient do
                      :timer.seconds(30)
                    )
 
+  @type response :: list() | map()
+
+  @spec get_stories(Keyword.t()) :: {:ok, response()} | {:error, term()}
   def get_stories(opts \\ []) do
     endpoint = endpoint("/v0/topstories.json")
     timeout = Keyword.get(opts, :timeout, @default_timeout)
@@ -22,6 +25,7 @@ defmodule HnAggregator.WebClient do
     do_request(endpoint, timeout)
   end
 
+  @spec get_item(integer(), Keyword.t()) :: {:ok, response()} | {:error, term()}
   def get_item(id, opts \\ []) do
     endpoint = endpoint("/v0/item/#{id}.json")
     timeout = Keyword.get(opts, :timeout, @default_timeout)
