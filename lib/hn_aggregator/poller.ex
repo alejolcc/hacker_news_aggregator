@@ -1,6 +1,9 @@
 defmodule HnAggregator.Poller do
   @moduledoc """
   Poller is in charge of the polling task and save to store the HN stories.
+
+  The interval of time to work and the quantity of stories to request
+  can be configured from Application enviroments vars
   """
 
   require Logger
