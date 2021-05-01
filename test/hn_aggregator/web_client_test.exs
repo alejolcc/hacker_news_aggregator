@@ -1,8 +1,15 @@
 defmodule HnAggregator.WebClientTest do
+  @moduledoc false
+
   use ExUnit.Case, async: true
 
-  setup_all do
+  setup do
     bypass = Bypass.open(port: 9999)
+
+    on_exit(fn ->
+      Bypass.down(bypass)
+    end)
+
     {:ok, bypass: bypass}
   end
 
@@ -52,8 +59,6 @@ defmodule HnAggregator.WebClientTest do
     valid_response = [1, 2, 3] |> Jason.encode!()
 
     Bypass.stub(bypass, "GET", "/v0/topstories.json", fn conn ->
-      :timer.sleep(5000)
-
       Plug.Conn.resp(
         conn,
         200,
@@ -61,7 +66,7 @@ defmodule HnAggregator.WebClientTest do
       )
     end)
 
-    assert {:error, :timeout} = HnAggregator.WebClient.get_stories(timeout: 1)
+    assert {:error, :timeout} = HnAggregator.WebClient.get_stories(timeout: 0)
   end
 
   test "get_item response 200", %{bypass: bypass} do
