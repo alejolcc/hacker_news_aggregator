@@ -9,13 +9,12 @@ defmodule HnAggregator.Application do
     children = [
       # Start the Telemetry supervisor
       HnAggregatorWeb.Telemetry,
-      {Finch, name: HnAggregator.WebClient},
       # Start the PubSub system
       {Phoenix.PubSub, name: HnAggregator.PubSub},
       # Start the Endpoint (http/https)
-      HnAggregatorWeb.Endpoint
-      # Start a worker by calling: HnAggregator.Worker.start_link(arg)
-      # {HnAggregator.Worker, arg}
+      HnAggregatorWeb.Endpoint,
+      {Finch, name: HnAggregator.WebClient},
+      {HnAggregator.Repo, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
