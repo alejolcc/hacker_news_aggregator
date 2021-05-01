@@ -1,8 +1,12 @@
 use Mix.Config
 
-config :hn_aggregator, HnAggregatorWeb.WebClient,
+config :hn_aggregator, HnAggregator.WebClient,
   url: "https://hacker-news.firebaseio.com",
   timeout: :timer.seconds(15)
+
+config :hn_aggregator, HnAggregator.Poller,
+  interval: :timer.minutes(5),
+  quantity: 50
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

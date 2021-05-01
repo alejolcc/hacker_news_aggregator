@@ -11,7 +11,7 @@ defmodule HnAggregator.WebClient do
   @name __MODULE__
   @default_timeout Application.compile_env(
                      :hn_aggregator,
-                     [HnAggregatorWeb.WebClient, :timeout],
+                     [HnAggregator.WebClient, :timeout],
                      :timer.seconds(30)
                    )
 
@@ -36,7 +36,7 @@ defmodule HnAggregator.WebClient do
   defp endpoint(call) do
     url =
       :hn_aggregator
-      |> Application.get_env(HnAggregatorWeb.WebClient)
+      |> Application.get_env(HnAggregator.WebClient)
       |> Keyword.fetch!(:url)
 
     url <> call

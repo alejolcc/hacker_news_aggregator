@@ -1,11 +1,15 @@
 defmodule HnAggregator.Poller do
   @moduledoc """
-  Poller is in charge of the polling task and save to store of the HN stories
+  Poller is in charge of the polling task and save to store the HN stories.
   """
+
+  require Logger
 
   @name __MODULE__
 
   use GenServer
+
+  alias HnAggregator.{Repo, WebClient}
 
   #
   # API
@@ -21,10 +25,12 @@ defmodule HnAggregator.Poller do
 
   @impl true
   def init(opts) do
-    polling_time = Keyword.get(opts, :polling_time)
+    interval = Keyword.get(opts, :interval, :timer.minutes(5))
+    quantity = Keyword.get(opts, :quantity, 50)
 
     state = %{
-      polling_time: polling_time
+      interval: interval,
+      quantity: quantity
     }
 
     {:ok, state, {:continue, :first_call}}
@@ -32,23 +38,60 @@ defmodule HnAggregator.Poller do
 
   @impl true
   def handle_continue(:first_call, state) do
-    IO.inspect("primera llamada")
-    schedule_work(state.polling_time)
+    work(state.quantity)
+    schedule_work(state.interval)
     {:noreply, state}
   end
 
   @impl true
   def handle_info(:work, state) do
-    # Do the desired work here
-    IO.inspect("WORK")
-    schedule_work(state.polling_time)
-
+    work(state.quantity)
+    schedule_work(state.interval)
     {:noreply, state}
   end
 
   #
   # Internal functions
   #
+
+  defp work(quantity) do
+    quantity
+    |> get_stories()
+    |> Repo.push_stories()
+  end
+
+  defp get_stories(n) do
+    Logger.info("Requesting top #{n} stories from HN")
+
+    case WebClient.get_stories() do
+      {:ok, stories} ->
+        stories
+        |> Enum.take(n)
+        |> Task.async_stream(&get_item/1, orderer: true)
+        |> Enum.reduce([], fn
+          {:ok, nil}, acc -> acc
+          {:ok, item}, acc -> acc ++ [item]
+        end)
+
+      err ->
+        Logger.error("Can't get stories from Hacker News, reason: #{inspect(err)}")
+        []
+    end
+  end
+
+  defp get_item(item_id) do
+    case WebClient.get_item(item_id) do
+      {:ok, item} ->
+        item
+
+      err ->
+        Logger.error(
+          "Can't get item #{inspect(item_id)} from Hacker News, reason: #{inspect(err)}"
+        )
+
+        nil
+    end
+  end
 
   defp schedule_work(time) do
     Process.send_after(self(), :work, time)
