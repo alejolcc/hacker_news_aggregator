@@ -11,9 +11,12 @@ defmodule HnAggregator.Application do
 
     children = [
       HnAggregatorWeb.Telemetry,
-      {Finch, name: HnAggregator.WebClient},
+      # Start the PubSub system
       {Phoenix.PubSub, name: HnAggregator.PubSub},
+      # Start the Endpoint (http/https)
       HnAggregatorWeb.Endpoint,
+      {Finch, name: HnAggregator.WebClient},
+      {HnAggregator.Repo, []},
       {HnAggregator.Poller, poller_config}
     ]
 
