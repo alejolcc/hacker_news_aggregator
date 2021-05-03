@@ -9,8 +9,7 @@ defmodule HnAggregator.RepoTest do
 
   test "stories can be pushed" do
     :ok = Repo.push_stories(@stories)
-    %{stories: repo_stories} = :sys.get_state(Repo)
-    assert repo_stories == @stories
+    assert :ets.tab2list(Stories)
   end
 
   test "lookup an story" do
