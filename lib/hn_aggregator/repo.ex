@@ -63,7 +63,44 @@ defmodule HnAggregator.Repo do
     stories
   end
 
+  @spec get_stories_paginated(integer(), integer()) :: list
+  def get_stories_paginated(1, limit) do
+    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], limit) do
+      :"$end_of_table" -> []
+      {stories, _ref} -> stories
+    end
+  end
+
+  def get_stories_paginated(page, limit) when page > 1 do
+    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], limit) do
+      :"$end_of_table" -> []
+      {stories, :"$end_of_table"} -> stories
+      {stories, ref} -> get_chunk(page - 1, ref, stories)
+    end
+  end
+
+  #
+  # Internal functions
+  #
+
+  defp get_chunk(1, ref, res) do
+    case :ets.select(ref) do
+      :"$end_of_table" -> res
+      {stories, _} -> stories
+    end
+  end
+
+  defp get_chunk(page, ref, res) do
+    case :ets.select(ref) do
+      :"$end_of_table" -> res
+      {stories, :"$end_of_table"} -> stories
+      {stories, ref} -> get_chunk(page - 1, ref, stories)
+    end
+  end
+
+  #
   # Callbacks
+  #
 
   @impl true
   def init(_opts) do
