@@ -1,6 +1,8 @@
 defmodule HnAggregator.RepoTest do
   @moduledoc false
 
+  # TODO: Test the border cases for pagination (empty repo, wrong pages/limits, etc)
+
   use ExUnit.Case, async: true
 
   alias HnAggregator.Repo
@@ -33,5 +35,15 @@ defmodule HnAggregator.RepoTest do
     stories = Repo.get_stories(2)
     assert 2 == Enum.count(stories)
     assert [%{"id" => 1}, %{"id" => 2}] == stories
+  end
+
+  test "get stories with pagination" do
+    :ok = Repo.push_stories(@stories)
+    assert [%{"id" => 2}] = Repo.get_stories_paginated(2, 1)
+  end
+
+  test "get stories with more limit than lenght" do
+    :ok = Repo.push_stories(@stories)
+    assert [%{"id" => 1}, %{"id" => 2}, %{"id" => 3}] = Repo.get_stories_paginated(1, 5)
   end
 end
