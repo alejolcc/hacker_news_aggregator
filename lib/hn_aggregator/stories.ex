@@ -18,5 +18,6 @@ defmodule HnAggregator.Stories do
     {:error, :bad_params}
   end
 
+  @spec get_story(integer) :: story
   def get_story(id), do: Repo.get_story(id)
 end

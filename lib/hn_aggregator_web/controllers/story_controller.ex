@@ -10,27 +10,36 @@ defmodule HnAggregatorWeb.StoryController do
 
     page = safe_parse(page)
 
-    response =
-      case Stories.list_paginated_stories(page, limit) do
-        {:error, :bad_params} ->
-          %{code: 400, message: "Invalid params"}
+    case Stories.list_paginated_stories(page, limit) do
+      {:error, :bad_params} ->
+        conn
+        |> put_status(400)
+        |> render("400.json", message: "Invalid Params")
 
-        {:ok, stories} ->
-          %{code: 200, stories: stories}
-      end
-
-    json(conn, response)
+      {:ok, stories} ->
+        conn
+        |> put_status(200)
+        |> render("index.json", stories: stories)
+    end
   end
 
   def index(conn, _params) do
     response = Stories.list_stories()
-    json(conn, %{status: 200, stories: response})
+
+    conn
+    |> put_status(200)
+    |> render("index.json", stories: response)
   end
 
   def get(conn, %{"id" => id}) do
-    id = safe_parse(id)
-    story = Stories.get_story(id)
-    json(conn, %{status: 200, stories: story})
+    story =
+      id
+      |> safe_parse()
+      |> Stories.get_story()
+
+    conn
+    |> put_status(200)
+    |> render("show.json", stories: story)
   end
 
   defp safe_parse(arg) do
