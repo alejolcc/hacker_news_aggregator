@@ -1,5 +1,7 @@
 defmodule HnAggregator.Stories do
-  @moduledoc false
+  @moduledoc """
+  The Stories context
+  """
 
   alias HnAggregator.Repo
 
