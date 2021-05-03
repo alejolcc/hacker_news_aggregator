@@ -13,6 +13,7 @@ defmodule HnAggregator.Repo do
   """
 
   @name __MODULE__
+  @table_name Stories
 
   use GenServer
 
@@ -31,7 +32,7 @@ defmodule HnAggregator.Repo do
   """
   @spec push_stories([story()]) :: :ok
   def push_stories(stories) do
-    GenServer.cast(@name, {:push, stories})
+    GenServer.call(@name, {:push, stories})
   end
 
   @doc """
@@ -39,7 +40,10 @@ defmodule HnAggregator.Repo do
   """
   @spec get_story(integer()) :: story()
   def get_story(id) do
-    GenServer.call(@name, {:lookup, id})
+    case :ets.lookup(@table_name, id) do
+      [{_id, story}] -> story
+      [] -> nil
+    end
   end
 
   @doc """
@@ -47,7 +51,7 @@ defmodule HnAggregator.Repo do
   """
   @spec get_stories :: [story()]
   def get_stories do
-    GenServer.call(@name, :get)
+    :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}])
   end
 
   @doc """
@@ -55,43 +59,40 @@ defmodule HnAggregator.Repo do
   """
   @spec get_stories(integer()) :: [story()]
   def get_stories(n) do
-    GenServer.call(@name, {:get, n})
+    {stories, _} = :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], n)
+    stories
   end
 
   # Callbacks
 
   @impl true
   def init(_opts) do
+    :ets.new(@table_name, [:ordered_set, :protected, :named_table])
+    index_ref = :counters.new(1, [])
+
     state = %{
-      stories: []
+      index_ref: index_ref
     }
 
     {:ok, state}
   end
 
   @impl true
-  def handle_cast({:push, stories}, state) do
-    {:noreply, %{state | stories: stories}}
-  end
+  def handle_call({:push, stories}, _from, state) do
+    ref = state.index_ref
 
-  @impl true
-  def handle_call({:lookup, id}, _from, state) do
-    story =
-      Enum.find(state.stories, fn s ->
-        s["id"] == id
-      end)
+    # Reset the index
+    :counters.put(ref, 1, 0)
 
-    {:reply, story, state}
-  end
+    # HN stories ids/times are not sorted,
+    # so to mantain the order we have to use an autoincremental id
+    # so the orderer_set can use to compare
+    Enum.each(stories, fn story ->
+      :counters.add(ref, 1, 1)
+      index = :counters.get(ref, 1)
+      :ets.insert(@table_name, {index, story})
+    end)
 
-  @impl true
-  def handle_call(:get, _from, state) do
-    {:reply, state.stories, state}
-  end
-
-  @impl true
-  def handle_call({:get, n}, _from, state) do
-    stories = Enum.take(state.stories, n)
-    {:reply, stories, state}
+    {:reply, :ok, state}
   end
 end
