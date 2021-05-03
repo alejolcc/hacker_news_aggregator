@@ -7,6 +7,7 @@ defmodule HnAggregatorWeb.Router do
 
   scope "/api", HnAggregatorWeb do
     pipe_through :api
+
     get "/stories", StoryController, :index
     get "/stories/:id", StoryController, :get
   end
