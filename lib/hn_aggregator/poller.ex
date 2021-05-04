@@ -12,7 +12,7 @@ defmodule HnAggregator.Poller do
 
   use GenServer
 
-  alias HnAggregator.{Repo, WebClient}
+  alias HnAggregator.{Stories, WebClient}
 
   #
   # API
@@ -60,7 +60,7 @@ defmodule HnAggregator.Poller do
   defp work(quantity) do
     quantity
     |> get_stories()
-    |> Repo.push_stories()
+    |> Stories.push_stories()
   end
 
   defp get_stories(n) do
