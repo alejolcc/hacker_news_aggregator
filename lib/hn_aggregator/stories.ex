@@ -7,6 +7,15 @@ defmodule HnAggregator.Stories do
 
   @type story :: map()
 
+  @stories_topic "stories"
+
+  @spec push_stories([map]) :: :ok
+  def push_stories(stories) do
+    Repo.push_stories(stories)
+    broadcast()
+    :ok
+  end
+
   @spec list_stories :: [story]
   def list_stories, do: Repo.get_stories()
 
@@ -22,4 +31,13 @@ defmodule HnAggregator.Stories do
 
   @spec get_story(integer) :: story
   def get_story(id), do: Repo.get_story(id)
+
+  @spec subscribe() :: :ok | {:error, term()}
+  def subscribe do
+    Phoenix.PubSub.subscribe(HnAggregator.PubSub, @stories_topic)
+  end
+
+  defp broadcast do
+    Phoenix.PubSub.broadcast(HnAggregator.PubSub, @stories_topic, :new_stories)
+  end
 end
