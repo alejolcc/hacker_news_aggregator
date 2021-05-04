@@ -5,17 +5,11 @@ defmodule HnAggregatorWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :browser do
-    plug(:accepts, ["html"])
-  end
-
   scope "/api", HnAggregatorWeb do
     pipe_through :api
-  end
 
-  scope "/", HnAggregatorWeb do
-    pipe_through :browser
-    get "/", DefaultController, :index
+    get "/stories", StoryController, :index
+    get "/stories/:id", StoryController, :get
   end
 
   # Enables LiveDashboard only for development
