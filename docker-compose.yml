@@ -1,0 +1,20 @@
+version: '3'
+services:
+  hn_aggregator:
+    image: hn_aggregator
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        APP_NAME: hn_aggregator
+        SECRET_KEY_BASE: iGjjYhIGLhRoG/a6QE9qVvoCdG9uoXLzk4/s+tHuBgtJpFyxpY43IwyB8HAbsViW
+    environment:
+      - WEB_HTTP_PORT=4000
+      - WEB_HTTP_HOST=localhost
+      - SECRET_KEY_BASE=iGjjYhIGLhRoG/a6QE9qVvoCdG9uoXLzk4/s+tHuBgtJpFyxpY43IwyB8HAbsViW
+
+    ports:
+      - 4000:4000
+    volumes:
+      - /var/log/hn_aggregator:/var/log
