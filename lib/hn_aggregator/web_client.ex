@@ -9,11 +9,7 @@ defmodule HnAggregator.WebClient do
   """
 
   @name __MODULE__
-  @default_timeout Application.compile_env(
-                     :hn_aggregator,
-                     [HnAggregator.WebClient, :timeout],
-                     :timer.seconds(30)
-                   )
+  @default_timeout :timer.seconds(30)
 
   @type response :: list() | map()
 

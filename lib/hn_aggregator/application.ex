@@ -6,7 +6,7 @@ defmodule HnAggregator.Application do
   use Application
 
   def start(_type, _args) do
-    poller_config = Application.get_env(:hn_aggregator, HnAggregator.Poller)
+    poller_config = Application.get_env(:hn_aggregator, HnAggregator.Poller, [])
 
     children = [
       HnAggregatorWeb.Telemetry,
