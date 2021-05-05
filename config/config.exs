@@ -14,7 +14,7 @@ config :hn_aggregator, HnAggregatorWeb.Endpoint,
     dispatch: [
       {:_,
        [
-         {"/asd/stories", HnAggregatorWeb.SocketHandler, []},
+         {"/ws/stories", HnAggregatorWeb.SocketHandler, []},
          {:_, Phoenix.Endpoint.Cowboy2Handler, {HnAggregatorWeb.Endpoint, []}}
        ]}
     ]
