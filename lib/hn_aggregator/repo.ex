@@ -5,6 +5,9 @@ defmodule HnAggregator.Repo do
   Is a wrap over an ordered_set ets.
   In order to mantain the same order than HN web page we use an autoincremental index,
   this way, the id 1 correspond to the first story in the hacker news page (https://news.ycombinator.com/)
+
+  Take note that getting the stories by is firebase id could be easily implemented
+  adding that id in the tuple when you push the data
   """
 
   @name __MODULE__
