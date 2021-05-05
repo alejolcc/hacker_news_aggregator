@@ -2,7 +2,7 @@
 # Builder docker image
 #
 
-FROM elixir:1.11.2-alpine AS builder
+FROM elixir:1.11-alpine AS builder
 
 # The following are build arguments used to change variable parts of the image.
 # The name of your application/release (required)
@@ -52,7 +52,7 @@ RUN \
 #
 
 # From this line onwards, we're in a new image, which will be the image used in production
-FROM elixir:1.11.2-alpine
+FROM elixir:1.11-alpine
 
 # The name of your application/release
 ARG APP_NAME
