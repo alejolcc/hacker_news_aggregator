@@ -2,10 +2,10 @@ defmodule HnAggregator.WebClient do
   @moduledoc """
   Hacker News Web API Client
 
-  Module that wrap the HTTP API of Hacker News
+  Module that wrap the all the HTTP API calls needed for the excercise
 
-  In order to complete the excercise we only implements the basic GET calls
-  needed for the aggregator in a simple way
+  All functions accept a `:timeout` option in milliseconds for the
+  request.
   """
 
   @name __MODULE__
@@ -13,6 +13,14 @@ defmodule HnAggregator.WebClient do
 
   @type response :: list() | map()
 
+  @doc """
+  Get top stories
+
+  ## Options
+
+  - `:timeout`: Timeout for the request
+
+  """
   @spec get_stories(Keyword.t()) :: {:ok, response()} | {:error, term()}
   def get_stories(opts \\ []) do
     endpoint = endpoint("/v0/topstories.json")
@@ -21,6 +29,14 @@ defmodule HnAggregator.WebClient do
     do_request(endpoint, timeout)
   end
 
+  @doc """
+  Get an item for the given `id`
+
+  ## Options
+
+  - `:timeout`: Timeout for the request
+
+  """
   @spec get_item(integer(), Keyword.t()) :: {:ok, response()} | {:error, term()}
   def get_item(id, opts \\ []) do
     endpoint = endpoint("/v0/item/#{id}.json")

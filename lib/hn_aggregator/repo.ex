@@ -2,14 +2,9 @@ defmodule HnAggregator.Repo do
   @moduledoc """
   Module use as Repository of stories
 
-  On this case in particular we can handle the data with a simple gen_server
-  because the data its no so big.
-  In the case that we need more complex operations over the Repo or if we have to handle
-  big amounts of data an ETS is prefered.
-
-  With this implementation all the operation are O(n) complexity.
-  With an ETS we can use the id as key and use 'term_to_binary' to store maps
-  this way we can lookup with a complexity of O(1)
+  Is a wrap over an ordered_set ets.
+  In order to mantain the same order than HN web page we use an autoincremental index,
+  this way, the id 1 correspond to the first story in the hacker news page (https://news.ycombinator.com/)
   """
 
   @name __MODULE__
@@ -28,7 +23,7 @@ defmodule HnAggregator.Repo do
   end
 
   @doc """
-  Push new stories to the store.
+  Push the list of `stories` to the repo giving an auto generated id
   """
   @spec push_stories([story()]) :: :ok
   def push_stories(stories) do
@@ -36,7 +31,7 @@ defmodule HnAggregator.Repo do
   end
 
   @doc """
-  Get an story by its id
+  Return an story by its `id`
   """
   @spec get_story(integer()) :: story()
   def get_story(id) do
@@ -47,7 +42,7 @@ defmodule HnAggregator.Repo do
   end
 
   @doc """
-  Get all stories from the store
+  Return all stories
   """
   @spec get_stories :: [story()]
   def get_stories do
@@ -55,7 +50,7 @@ defmodule HnAggregator.Repo do
   end
 
   @doc """
-  Get the first N stories from the store
+  Return the first `n` stories
   """
   @spec get_stories(integer()) :: [story()]
   def get_stories(n) do
@@ -63,16 +58,21 @@ defmodule HnAggregator.Repo do
     stories
   end
 
+  @doc """
+  Return an `amount` number of stories corresponding to a `page` number
+  """
   @spec get_stories_paginated(integer(), integer()) :: list
-  def get_stories_paginated(1, limit) do
-    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], limit) do
+  def get_stories_paginated(page, amount)
+
+  def get_stories_paginated(1, amount) do
+    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], amount) do
       :"$end_of_table" -> []
       {stories, _ref} -> stories
     end
   end
 
-  def get_stories_paginated(page, limit) when page > 1 do
-    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], limit) do
+  def get_stories_paginated(page, amount) when page > 1 do
+    case :ets.select(@table_name, [{{:"$1", :"$2"}, [], [:"$2"]}], amount) do
       :"$end_of_table" -> []
       {stories, :"$end_of_table"} -> stories
       {stories, ref} -> get_chunk(page - 1, ref, stories)

@@ -2,8 +2,16 @@ defmodule HnAggregator.Poller do
   @moduledoc """
   Poller is in charge of the polling task and save to store the HN stories.
 
-  The interval of time to work and the quantity of stories to request
-  can be configured from Application enviroments vars
+  The interval of time between each poll and the quantity of stories to request
+  can be configured from Application enviroments vars,
+  also with the runtime config can be configured via SO env vars
+
+  example:
+
+  config :hn_aggregator, HnAggregator.Poller,
+    interval: System.get_env("INTERVAL_ENV_VAR") |> String.to_integer(),
+    quantity: System.get_env("QUANTITY_ENV_VAR") |> String.to_integer(),
+
   """
 
   require Logger

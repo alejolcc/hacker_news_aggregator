@@ -1,6 +1,9 @@
 defmodule HnAggregatorWeb.SocketHandler do
   @moduledoc """
   Web Socket controller.
+
+  Implement the API over raw web_sockets,
+  use the behaviour of cowboy to handle the web_socket protocl
   """
 
   @behaviour :cowboy_websocket

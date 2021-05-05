@@ -1,6 +1,8 @@
 defmodule HnAggregatorWeb.StoriesChannel do
   @moduledoc """
   Channel controller.
+
+  Implement the API over phoenix channels
   """
   use HnAggregatorWeb, :channel
 
