@@ -11,6 +11,7 @@ use Mix.Config
 config :hn_aggregator, HnAggregatorWeb.Endpoint,
   url: [host: "localhost"],
   http: [
+    port: 4000,
     dispatch: [
       {:_,
        [
