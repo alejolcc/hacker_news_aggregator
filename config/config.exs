@@ -10,6 +10,15 @@ use Mix.Config
 # Configures the endpoint
 config :hn_aggregator, HnAggregatorWeb.Endpoint,
   url: [host: "localhost"],
+  http: [
+    dispatch: [
+      {:_,
+       [
+         {"/asd/stories", HnAggregatorWeb.SocketHandler, []},
+         {:_, Phoenix.Endpoint.Cowboy2Handler, {HnAggregatorWeb.Endpoint, []}}
+       ]}
+    ]
+  ],
   secret_key_base: "0cE67mlZ5+stWWqli/CSb7ChpVxgF8isYK9WsCl5gqmRt2SQLZyrRZPwH4ZLjEgz",
   render_errors: [view: HnAggregatorWeb.ErrorView, accepts: ~w(json), layout: false],
   pubsub_server: HnAggregator.PubSub,
