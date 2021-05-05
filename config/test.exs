@@ -11,8 +11,17 @@ config :hn_aggregator, HnAggregator.Poller,
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :hn_aggregator, HnAggregatorWeb.Endpoint,
-  http: [port: 4002],
-  server: false
+  http: [
+    port: 4002,
+    dispatch: [
+      {:_,
+       [
+         {"/ws/stories", HnAggregatorWeb.SocketHandler, []},
+         {:_, Phoenix.Endpoint.Cowboy2Handler, {HnAggregatorWeb.Endpoint, []}}
+       ]}
+    ]
+  ],
+  server: true
 
 # Print only warnings and errors during test
 config :logger, level: :warn

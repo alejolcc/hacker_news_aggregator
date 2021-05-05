@@ -44,6 +44,7 @@ defmodule HnAggregator.MixProject do
 
       # Development
       {:credo, "~> 1.5", only: :dev},
+      {:gun, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:bypass, "~> 2.0", only: [:test, :integration]}
     ]

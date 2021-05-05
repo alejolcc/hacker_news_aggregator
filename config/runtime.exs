@@ -1,7 +1,6 @@
 import Config
 
 if config_env() == :prod do
-
   config :hn_aggregator, HnAggregator.WebClient,
     url: "https://hacker-news.firebaseio.com",
     timeout: :timer.seconds(15)
@@ -19,7 +18,16 @@ if config_env() == :prod do
       """
 
   config :hn_aggregator, HnAggregatorWeb.Endpoint,
-    http: [port: (System.fetch_env!("WEB_HTTP_PORT") |> String.to_integer())],
+    http: [
+      port: System.fetch_env!("WEB_HTTP_PORT") |> String.to_integer(),
+      dispatch: [
+        {:_,
+         [
+           {"/ws/stories", HnAggregatorWeb.SocketHandler, []},
+           {:_, Phoenix.Endpoint.Cowboy2Handler, {HnAggregatorWeb.Endpoint, []}}
+         ]}
+      ]
+    ],
     url: [host: System.get_env("WEB_HTTP_HOST") || "localhost"],
     ssl: false,
     pubsub_server: HnAggregatorWeb.PubSub,
