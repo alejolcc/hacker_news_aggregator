@@ -30,7 +30,7 @@ if config_env() == :prod do
     ],
     url: [host: System.get_env("WEB_HTTP_HOST") || "localhost"],
     ssl: false,
-    pubsub_server: HnAggregatorWeb.PubSub,
+    pubsub_server: HnAggregator.PubSub,
     live_view: [signing_salt: "G5aBx78B"],
     render_errors: [view: HnAggregatorWeb.ErrorView, accepts: ~w(html json), layout: false],
     check_origin: false,
