@@ -8,7 +8,7 @@ This is a demo project for educational purposes.
 
 Implements a basic phoenix app that fetches data from the Hacker News API for further analysis or consumption.
 
-Every an interval of time configurable, a background process fetch the top N stories from HN and save the data into an ETS used as Repo.
+"Every configurable interval of time", a background process fetch the top N stories from HN and save the data into an ETS used as Repo.
 
 Serve the data via Json HTTP rest API and Json over WebSocket
 
@@ -31,7 +31,7 @@ You can GET the data via HTTP
 ```
 GET /api/stories
 ```
-List all stories stored in the repo, accept query params for pagination and limits as **page=1&limit=3**
+List all stories stored in the repo, accept query params for pagination and limits as **page=1&limit=3** (default limit=10)
 
 For example to list the first 3 stories :
 localhost:4000/api/stories?page=1&limit=3
@@ -104,22 +104,23 @@ http://localhost:4000/api/stories/1
 NOTE: The IDs are implemented to match with the ids shown in HN page (https://news.ycombinator.com/) to easily testing
 
 ## WEB SOCKET API
-- Uppon the conection the server send to you all the stories stored in the repo in that moment
+- Upon conection server sends all stories stored in the repo in that moment
 
-- Every time that the stories are poolled the new stories are sended to the socket
+- Every time that the stories are poolled, the server will sent the new stories to the socket
 
-In order to get the data via WebSocket you have 2 options
+In order to get data via WebSocket you have 2 options
 
 **1 - Using Phoenix channels.**
-You can subscribe to topic stories:feed in localhost:4000/sockets
+You can subscribe to topic stories:feed in ws://localhost:4000/socket
 
 **2 - Simple WebSocket**
-You can connect to a basic web socket in localhost:4000/ws/stories
+You can connect to a basic web socket in ws://localhost:4000/ws/stories
 
 
 ### Git hooks
+There is a githook to check and force to you to run `mix format` in order to maintain readability and consistency in the code
 
-Run the following command after cloning the repository:
+To configure run the following command after cloning the repository:
 
 ```bash
 git config --local core.hooksPath .githooks/
