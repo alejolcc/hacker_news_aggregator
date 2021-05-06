@@ -35,11 +35,6 @@ COPY . .
 # Run the build
 RUN mix do deps.get, deps.compile, clean, compile
 
-# Install phoenix npm modules
-RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
-RUN npm run --prefix ./assets deploy
-RUN mix phx.digest
-
 # Run the release
 WORKDIR /opt/app
 RUN \
