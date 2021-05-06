@@ -36,8 +36,7 @@ if config_env() == :prod do
     check_origin: false,
     server: true,
     secret_key_base: secret_key_base,
-    transport_options: [socket_opts: [:inet6]],
-    cache_static_manifest: "priv/static/cache_manifest.json"
+    transport_options: [socket_opts: [:inet6]]
 
   # Configures Elixir's Logger
   config :logger, :console,

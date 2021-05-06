@@ -7,7 +7,6 @@ defmodule HnAggregator.Application do
     poller_config = Application.get_env(:hn_aggregator, HnAggregator.Poller, [])
 
     children = [
-      HnAggregatorWeb.Telemetry,
       {Phoenix.PubSub, name: HnAggregator.PubSub},
       HnAggregatorWeb.Endpoint,
       {Finch, name: HnAggregator.WebClient},
