@@ -3,7 +3,7 @@ defmodule HnAggregator.Repo do
   Module use as Repository of stories
 
   Is a wrap over an ordered_set ets.
-  In order to mantain the same order than HN web page we use an autoincremental index,
+  In order to mantain the same order than HN web page we use an auto increment index,
   this way, the id 1 correspond to the first story in the hacker news page (https://news.ycombinator.com/)
 
   Take note that getting the stories by is firebase id could be easily implemented

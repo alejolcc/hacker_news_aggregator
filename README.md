@@ -31,7 +31,7 @@ You can GET the data via HTTP
 ```
 GET /api/stories
 ```
-List all stories stored in the repo, accept query params for pagination and limits as **page=1&limit=3**
+List all stories stored in the repo, accept query params for pagination and limits as **page=1&limit=3** (default limit=10)
 
 For example to list the first 3 stories :
 localhost:4000/api/stories?page=1&limit=3
@@ -104,9 +104,9 @@ http://localhost:4000/api/stories/1
 NOTE: The IDs are implemented to match with the ids shown in HN page (https://news.ycombinator.com/) to easily testing
 
 ## WEB SOCKET API
-- Uppon the conection the server send to you all the stories stored in the repo in that moment
+- Upon the connection the server send to you all the stories stored in the repo in that moment
 
-- Every time that the stories are poolled the new stories are sended to the socket
+- Every time that the stories are poolled, the server will send the new stories to the socket
 
 In order to get the data via WebSocket you have 2 options
 
